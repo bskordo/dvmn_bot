@@ -1,4 +1,1 @@
 pytelegrambotapi==2.3.0
-jinja2==2.8
-sqlalchemy==1.1.15
-flask==0.11.1
