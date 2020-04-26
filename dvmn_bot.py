@@ -13,22 +13,19 @@ TIMEOUT = 60
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 
 
-def send_message_to_client(final_message):
-    bot.send_message(chat_id=CHAT_ID, text=final_message)
 
-
-def prepare_message(messages):
-    positiv_message = 'Все хорошо, можно браться за следeущее задание'
+def send_result_message(messages):
+    positive_message = 'Все хорошо, можно браться за следeущее задание'
     negative_message = "Есть ошибки, надо исправить"
-    for message in messages:
-        lesson_name = message['lesson_title']
-        result_message = negative_message if message['is_negative'] else positiv_message
-    feed_back_message = 'Mы проверили Ваше задание "{}" \n {}'.format(lesson_name, result_message)
-    return feed_back_message
+    result_message = negative_message if messages[-1]['is_negative'] else positive_message
+    feed_back_message = 'Mы проверили Ваше задание "{}" \n {}'.format(messages[0]['lesson_title'], result_message)
+    bot.send_message(chat_id=CHAT_ID, text=feed_back_message)
 
 
-def is_server_response_correct(response, json_response):
-    return response.status_code == 200 and 'error' not in json_response
+
+def is_server_response_correct(response):
+    return response.status_code == 200 and 'error' not in response.json()
+
 
 
 def get_status_and_timestamp(json_response):
@@ -48,13 +45,12 @@ def get_response_from_server():
     while True:
         payload = {'timestamp': timestamp}
         try:
-            response = requests.get(url, headers=headers, params=payload, timeout=60)
-            json_response = response.json()
-            if is_server_response_correct(response, json_response):
+            response = requests.get(url, headers=headers, params=payload)
+            if is_server_response_correct(response):
+                json_response = response.json()
                 timestamp, status = get_status_and_timestamp(json_response)
                 if status == 'found':
-                    prepared_message = prepare_message(json_response['new_attempts'])
-                    send_message_to_client(prepared_message)
+                    send_result_message(json_response['new_attempts'])
         except(requests.exceptions.ReadTimeout, ConnectionError):
             if connection_attempt < COUNT_OF_ATTEMP:
                 time.sleep(SLEEPING_TIME)
