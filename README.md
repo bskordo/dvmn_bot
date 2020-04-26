@@ -20,7 +20,7 @@ Step 2. Install modules from requirements
 Step 3. Launch bot
 
 
-Example creating a new virtual environments and launch on Linux , Python 3.5:
+Example of creating a new virtual environments and launch on Linux , Python 3.5:
 
 ```
 virtualenv "name_of_virtualenv"
