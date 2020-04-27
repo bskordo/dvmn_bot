@@ -2,9 +2,9 @@ import requests
 import telebot
 import json
 import os
+import logging
 
-
-COUNT_OF_ATTEMP = 2
+ATTEMPS_COUNT = 2
 SLEEPING_TIME = 5
 TELEGRAM_TOKEN = os.environ['TELEGRAM_TOKEN']
 AUTHORIZATION_TOKEN = os.environ['AUTHORIZATION_TOKEN']
@@ -51,8 +51,12 @@ def get_response_from_server():
                 timestamp, status = get_status_and_timestamp(json_response)
                 if status == 'found':
                     send_result_message(json_response['new_attempts'])
-        except(requests.exceptions.ReadTimeout, ConnectionError):
-            if connection_attempt < COUNT_OF_ATTEMP:
+            else:
+                logging.warning('Bad response')
+        except(requests.exceptions.ReadTimeout):
+            continue
+        except(ConnectionError):
+            if connection_attempt < ATTEMPS_COUNT:
                 time.sleep(SLEEPING_TIME)
                 connection_attempt += 1
             continue
