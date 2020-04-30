@@ -6,7 +6,8 @@ Below parameters declared as environment variables, don't forget to set up:
 ```
 export TELEGRAM_TOKEN='telegram token'
 export AUTHORIZATION_TOKEN='Authorization token'
-export CHAT_ID='401415009'
+export CHAT_ID='chat id'
+export NOTIFICATION_TELEGRAM_TOKEN = 'second telegram token'
 
 ```
 
@@ -30,8 +31,18 @@ python3 dvmn_bot.py
 
 ```
 
-# Project Goals
 
-The code is written for educational purposes. Training course for web-developers - [DEVMAN.org](https://devman.org)
-export TELEGRAM_TOKEN='885810455:AAHJ8ax0cQDzE8XWHNtZ7OB3zwD9aJfaELc'
-export AUTHORIZATION_TOKEN='Token 457408514c3db79780ad36af38475de039146785'
+### How to deploy on Heroku(before need to install heroku cli)
+
+
+```
+heroku login -i
+heroku create
+git push heroku master
+heroku config:set TELEGRAM_TOKEN='telegram token'
+heroku config:set AUTHORIZATION_TOKEN='Authorization token'
+heroku config:set CHAT_ID='chat id'
+heroku config:set NOTIFICATION_TELEGRAM_TOKEN = 'second telegram token'
+sheroku ps:scale bot=1
+```
+
