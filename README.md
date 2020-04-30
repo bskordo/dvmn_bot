@@ -5,8 +5,8 @@
 Below parameters declared as environment variables, don't forget to set up:
 ```
 export TELEGRAM_TOKEN='telegram token'
-export AUTHORIZATION_TOKEN='Authorization token'
-export CHAT_ID='chat id'
+export DVMN_AUTHORIZATION_TOKEN='Devman Authorization token'
+export TELEGRAM_USER_CHAT_ID='telegram_user_chat id'
 export NOTIFICATION_TELEGRAM_TOKEN = 'second telegram token'
 
 ```
@@ -40,8 +40,8 @@ heroku login -i
 heroku create
 git push heroku master
 heroku config:set TELEGRAM_TOKEN='telegram token'
-heroku config:set AUTHORIZATION_TOKEN='Authorization token'
-heroku config:set CHAT_ID='chat id'
+heroku config:set DVMN_AUTHORIZATION_TOKEN='Devman Authorization token'
+heroku config:set TELEGRAM_USER_CHAT_ID='telegram_user_chat id'
 heroku config:set NOTIFICATION_TELEGRAM_TOKEN = 'second telegram token'
 sheroku ps:scale bot=1
 ```
