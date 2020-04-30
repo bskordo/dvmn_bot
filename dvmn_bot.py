@@ -3,15 +3,21 @@ import telebot
 import json
 import os
 import logging
+from utils import TelegramLogsHandler
+
 
 ATTEMPS_COUNT = 2
 SLEEPING_TIME = 5
 TELEGRAM_TOKEN = os.environ['TELEGRAM_TOKEN']
+NOTIFICATION_TELEGRAM_TOKEN = os.environ['NOTIFICATION_TELEGRAM_TOKEN']
 AUTHORIZATION_TOKEN = os.environ['AUTHORIZATION_TOKEN']
 CHAT_ID = os.environ['CHAT_ID']
 TIMEOUT = 60
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
-
+notification_bot = telebot.TeleBot(NOTIFICATION_TELEGRAM_TOKEN)
+logger = logging.getLogger('Logger')
+logger.setLevel(logging.WARNING)
+logger.addHandler(TelegramLogsHandler(notification_bot, CHAT_ID))
 
 
 def send_result_message(messages):
@@ -22,10 +28,8 @@ def send_result_message(messages):
     bot.send_message(chat_id=CHAT_ID, text=feed_back_message)
 
 
-
 def is_server_response_correct(response):
     return response.status_code == 200 and 'error' not in response.json()
-
 
 
 def get_status_and_timestamp(json_response):
@@ -52,15 +56,17 @@ def get_response_from_server():
                 if status == 'found':
                     send_result_message(json_response['new_attempts'])
             else:
-                logging.warning('Bad response')
+                logger.error('Received Bad response')
         except(requests.exceptions.ReadTimeout):
             continue
         except(ConnectionError):
             if connection_attempt < ATTEMPS_COUNT:
                 time.sleep(SLEEPING_TIME)
                 connection_attempt += 1
+            logger.error('Connection Lost')
             continue
-
+        except Exception as error_msg:
+            logger.error('Bot is broken by error: {}'.format(error_msg))
 
 if __name__ == '__main__':
     get_response_from_server()
